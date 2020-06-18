@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request, abort
 from app.models import (
     PromoCode,
     Event,
+    EventSchema,
     Audience,
     AudienceSchema,
     Purchase,
@@ -31,6 +32,14 @@ def create_event(userid):
     add_to_database(new_event)
 
     return jsonify({"event": new_event.user_id})
+
+@event.route("/events/<userid>", methods=["GET"])
+def get_events(userid):
+    user = User.query.filter(User.id == userid).first()
+    event = user.event
+    schema = EventSchema(many=True)
+    events = schema.dump(event)
+    return jsonify(events)
 
 @event.route("/event/audience/<eventid>", methods=["GET"])
 def audience(eventid):

@@ -6,6 +6,7 @@ from app.controllers.database_controllers import (
     add_to_database
 )
 from app.controllers.cleaner import name_cleaner
+import os
 
 auth = Blueprint("auth", __name__)
 
@@ -66,3 +67,21 @@ def signup():
     add_to_database(new_user)
 
     return jsonify({'id': new_user.id}), 200
+
+@auth.route('/google_auth', methods=['POST'])
+def google():
+    data = request.json
+    email = data.get('email')
+
+    exist_user = User.query.filter(User.email == email).first()
+    if exist_user:
+        return jsonify({'id': exist_user.id}), 200
+
+    password = os.environ.get("DEFAULT_PASSWORD")
+
+    name = name_cleaner(email)
+    hashed_password = hash_password(password)
+    user = User(email, password, name)
+    add_to_database(user)
+
+    return jsonify({'id': user.id}), 200

@@ -36,7 +36,7 @@ class Event(db.Model):
         self.name = event_data.get("name")
         self.body = event_data.get("detail")
         self.location = event_data.get("location")
-        self.type = event_data.get("type")
+        self.type = event_data.get("plan")
         self.date = from_string_to_date(event_data.get("date"))
         self.user = kwargs.get("user")
 
